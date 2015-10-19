@@ -58,7 +58,6 @@ func main() {
 	}
 	nodes, err := GetData(r)
 	if err != nil {
-
 		log.Fatal("retrieving data:", err)
 	}
 	var dirName string
@@ -72,14 +71,32 @@ func main() {
 	if err != nil {
 		log.Fatal("creating folder:", err)
 	}
-	w, err := os.Create(dirName + "/data.json")
+	jsonW, err := os.Create(dirName + "/data.json")
 	if err != nil {
 		log.Fatal("writing json file:", err)
 	}
-	defer w.Close()
-	err = WriteData(w, nodes)
+	defer jsonW.Close()
+	err = WriteData(jsonW, nodes)
 	if err != nil {
 		log.Fatal("writing json file:", err)
+	}
+	indexAvatarW, err := os.Create(dirName + "/index_avatar.html")
+	if err != nil {
+		log.Fatal("writing index_avatar.html:", err)
+	}
+	defer indexAvatarW.Close()
+	err = createIndexWithAvatar(indexAvatarW)
+	if err != nil {
+		log.Fatal("writing index_avatar.html:", err)
+	}
+	indexGroupsW, err := os.Create(dirName + "/index_groups.html")
+	if err != nil {
+		log.Fatal("writing index_groups.html:", err)
+	}
+	defer indexGroupsW.Close()
+	err = createIndexWithGroups(indexGroupsW)
+	if err != nil {
+		log.Fatal("writing index_groups.html:", err)
 	}
 
 }

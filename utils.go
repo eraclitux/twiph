@@ -1,11 +1,37 @@
 package main
 
 import (
-	"bufio"
 	"encoding/csv"
 	"encoding/json"
+	"html/template"
 	"io"
+	"regexp"
+	"strconv"
 )
+
+func createIndexWithAvatar(w io.Writer) error {
+	t, err := template.ParseFiles("templates/index_avatar.html")
+	if err != nil {
+		return err
+	}
+	err = t.Execute(w, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func createIndexWithGroups(w io.Writer) error {
+	t, err := template.ParseFiles("templates/index_groups.html")
+	if err != nil {
+		return err
+	}
+	err = t.Execute(w, nil)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 // NewMemNode returns a memory backed node which implements
 // Node interface.
@@ -27,7 +53,6 @@ func NewMemNode(data TwitterData, group string) Node {
 // Twitter Name (string), Group in graph (int).
 func GetData(r io.Reader) ([]Node, error) {
 	nodes := make([]Node, 0)
-	scanner := bufio.NewScanner(r)
 	c := csv.NewReader(r)
 	for {
 		record, err := c.Read()
@@ -39,26 +64,27 @@ func GetData(r io.Reader) ([]Node, error) {
 		}
 		profile, err := GetProfile(record[0])
 		if err != nil {
-			return nil, err
+			ErrorLogger.Println("calling remote APIs:", err)
+			continue
+			//return nil, err
 		}
 		if profile.Twid != "" {
 			err = GetFriends(&profile)
 			if err != nil {
-				return nil, err
+				ErrorLogger.Println("calling remote APIs:", err)
+				continue
+				//return nil, err
 			}
 			n := NewMemNode(profile, record[1])
 			nodes = append(nodes, n)
 		}
-	}
-	if err := scanner.Err(); err != nil {
-		return nil, err
 	}
 	return nodes, nil
 }
 
 type dNode struct {
 	Name       string `json:"name"`
-	Group      string `json:"group"`
+	Group      int    `json:"group"`
 	Avatar     string `json:"avatar"`
 	ScreenName string `json:"screenName"`
 }
@@ -68,13 +94,24 @@ type dLink struct {
 	Value  uint `json:"value"`
 }
 
+func parseGroupId(g string) int {
+	rgxp := regexp.MustCompile(`[[:space:]]`)
+	g = rgxp.ReplaceAllString(g, "")
+	i, err := strconv.ParseInt(g, 10, 32)
+	if err != nil {
+		ErrorLogger.Println("converting to int, will be 0:", g)
+		return 1
+	}
+	return int(i)
+}
 func WriteData(w io.Writer, nodes []Node) error {
 	names := []dNode{}
 	links := []dLink{}
 	for _, n := range nodes {
+		gId := parseGroupId(n.Group())
 		m := dNode{
 			Name:       n.RealName(),
-			Group:      n.Group(),
+			Group:      gId,
 			Avatar:     n.Pic(),
 			ScreenName: n.TwitterName(),
 		}
