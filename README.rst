@@ -15,13 +15,13 @@ Examples
 
 These are the output for 100 younger italian parliamentarians grouped by political parties:
 
-|image0|_
-
-|image1|_
+|image0|_ |image1|_
 
 .. |image0| image:: http://www.eraclitux.com/img/twiph_100_younger.png
+.. _image0: http://www.eraclitux.com/img/twiph_100_younger.png
 
 .. |image1| image:: http://www.eraclitux.com/img/twiph_100_younger_avatar.png
+.. _image1: http://www.eraclitux.com/img/twiph_100_younger_avatar.png
 
 Live demo
 =========
