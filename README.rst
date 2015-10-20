@@ -1,7 +1,7 @@
 twiph
 =====
 
-``twiph`` draws a fancy graph representation of Twitter connections given a list of names/surnames.
+``twiph`` draws fancy interactive graphs representation of Twitter connections (aka friends) given a list of names/surnames. It could be uselful to spot and analyze social connections whithin an arbitrary list of people.
 
 Authentication
 ==============
@@ -12,6 +12,26 @@ Then an ``Access Token`` must be created https://apps.twitter.com/app/<app-id>/k
 
 Examples
 ========
+
+These are the output for 100 younger italian parliamentarians grouped by political parties:
+
+|image0|_
+
+|image1|_
+
+.. |image0| image:: http://www.eraclitux.com/img/twiph_100_younger.png
+
+.. |image1| image:: http://www.eraclitux.com/img/twiph_100_younger_avatar.png
+
+Live demo
+=========
+
+http://www.eraclitux.com/twiph_demo/100_younger_camera_groups/index_groups.html
+
+http://www.eraclitux.com/twiph_demo/100_younger_camera_groups/index_avatar.html
+
+Usage
+=====
 
 Once retrieved auth credentils and created a ``cfg`` (a sample is provided in ``conf/sample.cfg``) file::
 
@@ -34,6 +54,8 @@ Credits
 =======
 
 The amazing ``D3.js`` is used to create graphs http://d3js.org/
+
+Political data has been retrieved by ``Openpolis`` REST APIs http://api3.openpolis.it/
 
 Disclaimer
 ==========
