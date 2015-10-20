@@ -1,3 +1,11 @@
+// Copyright (c) 2015 Andrea Masi. All rights reserved.
+// Use of this source code is governed by MIT license
+// which that can be found in the LICENSE.txt file.
+
+// twiph draws graph representation of Twitter connections of a given list of names.
+// csv must have following format:
+//
+// 	Name Surname (string), Group id in graph (int), Group name in graph (string).
 package main
 
 // FIXME add mongodb as backend.

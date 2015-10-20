@@ -1,7 +1,7 @@
 twiph
 =====
 
-Draw a fancy graph representation of Twitter connections given a list of names/surnames.
+``twiph`` draws a fancy graph representation of Twitter connections given a list of names/surnames.
 
 Authentication
 ==============
@@ -9,6 +9,14 @@ Authentication
 You need to create your own app: https://apps.twitter.com/app/new
 
 Then an ``Access Token`` must be created https://apps.twitter.com/app/<app-id>/keys
+
+Examples
+========
+
+Once retrieved auth credentils and created a ``cfg`` (a sample is provided in ``conf/sample.cfg``) file::
+
+        export CFGP_FILE_PATH=./conf/mine.cfg;
+        twiph -csv list.csv
 
 Run tests
 =========
@@ -21,6 +29,11 @@ Notes
 =====
 
 Graphs with nodes >= ~100 start to be *very* heavy (cpu intensive) to display.
+
+Credits
+=======
+
+The amazing ``D3.js`` is used to create graphs http://d3js.org/
 
 Disclaimer
 ==========
