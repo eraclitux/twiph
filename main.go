@@ -98,5 +98,4 @@ func main() {
 	if err != nil {
 		log.Fatal("writing index_groups.html:", err)
 	}
-
 }

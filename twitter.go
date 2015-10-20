@@ -65,6 +65,15 @@ func sleepMin(l limits) {
 		}
 	}
 	if min <= 1 {
+		// FIXME
+		//signalChan := make(chan os.Signal, 1)
+		//signal.Notify(signalChan, os.Interrupt)
+		//signal.Notify(signalChan, syscall.SIGTERM)
+		//select {
+		//case <-signalChan:
+		//	ErrorLogger.Println("interrupt signal intercepted")
+		//	return nodes, nil
+		//default:
 		secs := reset - time.Now().Unix()
 		InfoLogger.Printf("reached limit for \"%s\", sleeping %d seconds", resource, secs)
 		// FIXME print a count down

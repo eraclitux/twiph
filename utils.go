@@ -5,11 +5,8 @@ import (
 	"encoding/json"
 	"html/template"
 	"io"
-	"os"
-	"os/signal"
 	"regexp"
 	"strconv"
-	"syscall"
 )
 
 func createIndexWithAvatar(w io.Writer) error {
@@ -57,39 +54,29 @@ func NewMemNode(data TwitterData, group string) Node {
 func GetData(r io.Reader) ([]Node, error) {
 	nodes := make([]Node, 0)
 	c := csv.NewReader(r)
-	// FIXME this will not work, we must intercept this in spleep function
-	signalChan := make(chan os.Signal, 1)
-	signal.Notify(signalChan, os.Interrupt)
-	signal.Notify(signalChan, syscall.SIGTERM)
 	for {
-		select {
-		case <-signalChan:
-			ErrorLogger.Println("interrupt signal intercepted")
-			return nodes, nil
-		default:
-			record, err := c.Read()
-			if err == io.EOF {
-				break
-			}
-			if err != nil {
-				return nil, err
-			}
-			profile, err := GetProfile(record[0])
+		record, err := c.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		profile, err := GetProfile(record[0])
+		if err != nil {
+			ErrorLogger.Println("calling remote APIs:", err)
+			continue
+			//return nil, err
+		}
+		if profile.Twid != "" {
+			err = GetFriends(&profile)
 			if err != nil {
 				ErrorLogger.Println("calling remote APIs:", err)
 				continue
 				//return nil, err
 			}
-			if profile.Twid != "" {
-				err = GetFriends(&profile)
-				if err != nil {
-					ErrorLogger.Println("calling remote APIs:", err)
-					continue
-					//return nil, err
-				}
-				n := NewMemNode(profile, record[1])
-				nodes = append(nodes, n)
-			}
+			n := NewMemNode(profile, record[1])
+			nodes = append(nodes, n)
 		}
 	}
 	return nodes, nil
@@ -118,6 +105,7 @@ func parseGroupId(g string) int {
 	return int(i)
 }
 func WriteData(w io.Writer, nodes []Node) error {
+	InfoLogger.Println("writing data...")
 	names := []dNode{}
 	links := []dLink{}
 	for _, n := range nodes {
@@ -147,6 +135,5 @@ func WriteData(w io.Writer, nodes []Node) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
