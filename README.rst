@@ -17,6 +17,11 @@ Tests need Twitter api credentials. You can specify them by command line or in c
 
         export CFGP_FILE_PATH=./conf/test.cfg; go test
 
+Notes
+=====
+
+Graphs with nodes >= ~100 start to be *very* heavy (cpu intensive) to display.
+
 Disclaimer
 ==========
 

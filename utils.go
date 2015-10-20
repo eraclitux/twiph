@@ -36,11 +36,12 @@ func createIndexWithGroups(w io.Writer) error {
 // NewMemNode returns a memory backed node which implements
 // Node interface.
 // Do not use in goroutines!
-func NewMemNode(data TwitterData, group string) Node {
+func NewMemNode(data TwitterData, groupID, groupName string) Node {
 	n := &memoryNode{
 		TwitterData:     data,
 		id:              counterID,
-		group:           group,
+		groupID:         groupID,
+		groupName:       groupName,
 		internalFriends: make([]uint, 0),
 	}
 	counterID++
@@ -50,7 +51,7 @@ func NewMemNode(data TwitterData, group string) Node {
 // GetData searchs and retrieves Twitter accounts
 // passed as csv encoded data from an io.Reader.
 // Data format expected:
-// Twitter Name (string), Group in graph (int).
+// Twitter Name (string), Group id in graph (int), Group name in graph
 func GetData(r io.Reader) ([]Node, error) {
 	nodes := make([]Node, 0)
 	c := csv.NewReader(r)
@@ -75,7 +76,7 @@ func GetData(r io.Reader) ([]Node, error) {
 				continue
 				//return nil, err
 			}
-			n := NewMemNode(profile, record[1])
+			n := NewMemNode(profile, record[1], record[2])
 			nodes = append(nodes, n)
 		}
 	}
@@ -85,6 +86,7 @@ func GetData(r io.Reader) ([]Node, error) {
 type dNode struct {
 	Name       string `json:"name"`
 	Group      int    `json:"group"`
+	GroupName  string `json:"group_name"`
 	Avatar     string `json:"avatar"`
 	ScreenName string `json:"screenName"`
 }
@@ -113,6 +115,7 @@ func WriteData(w io.Writer, nodes []Node) error {
 		m := dNode{
 			Name:       n.RealName(),
 			Group:      gId,
+			GroupName:  n.GroupName(),
 			Avatar:     n.Pic(),
 			ScreenName: n.TwitterName(),
 		}

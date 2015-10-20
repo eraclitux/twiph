@@ -7,6 +7,7 @@ var counterID uint
 type Node interface {
 	RealName() string
 	Group() string
+	GroupName() string
 	LocalFriends() []uint
 	MapLocal([]Node)
 	// Returns Twitter screen name
@@ -41,7 +42,8 @@ type memoryNode struct {
 	TwitterData
 	// Internal id used to create json for graph
 	id              uint
-	group           string
+	groupID         string
+	groupName       string
 	internalFriends []uint
 }
 
@@ -61,7 +63,10 @@ func (n *memoryNode) TwitterName() string {
 }
 
 func (n *memoryNode) Group() string {
-	return n.group
+	return n.groupID
+}
+func (n *memoryNode) GroupName() string {
+	return n.groupName
 }
 func (n *memoryNode) Pic() string {
 	return n.Avatar

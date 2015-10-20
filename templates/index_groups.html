@@ -54,7 +54,7 @@ d3.json("data.json", function(error, graph) {
       .call(force.drag);
 
   node.append("title")
-      .text(function(d) { return d.name+" @"+d.screenName; });
+      .text(function(d) { return d.name+" @"+d.screenName+" - "+d.group_name; });
 
   force.on("tick", function() {
     link.attr("x1", function(d) { return d.source.x; })
