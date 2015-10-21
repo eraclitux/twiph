@@ -5,7 +5,7 @@
 // twiph draws graph representation of Twitter connections of a given list of names.
 // csv must have following format:
 //
-// 	Name Surname (string), Group id in graph (int), Group name in graph (string).
+// 	Name Surname (string, will be searched on Twitter), Group id in graph (int, differentiate colors), Group name in graph (string, showed in tooltips).
 package main
 
 // FIXME add mongodb as backend.
@@ -20,6 +20,11 @@ import (
 	"github.com/eraclitux/cfgp"
 )
 
+// Version is populated at compile time
+// with git describe output.
+var Version = "unknown-rev"
+var BuildTime = "unknown-time"
+
 type myConf struct {
 	OutDir            string `cfgp:",output directory where to store graph,"`
 	Csv               string `cfgp:",path to csv file,"`
@@ -29,6 +34,7 @@ type myConf struct {
 	ConsumerSecret    string `cfgp:",Twitter ConsumerSecret,"`
 	AccessToken       string `cfgp:",Twitter AccessToken,"`
 	AccessTokenSecret string `cfgp:",Twitter AccessTokenSecret,"`
+	Version           bool   `cfgp:"v,show version and exit,"`
 }
 
 var conf myConf
@@ -51,6 +57,9 @@ func main() {
 	err := cfgp.Parse(&conf)
 	if err != nil {
 		log.Fatal("parsing configuration:", err)
+	}
+	if conf.Version {
+		log.Fatalf("%s %s", Version, BuildTime)
 	}
 	SetupLoggers(os.Stdout)
 	InfoLogger.Println("starting...")
